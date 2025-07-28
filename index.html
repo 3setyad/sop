@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flowchart Generator</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f7fa;
+            color: #333;
+        }
+        .container {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .panel {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 20px;
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        h2 {
+            font-size: 1.2em;
+            color: #3498db;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+            margin-top: 0;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #555;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-family: inherit;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        .btn-danger {
+            background-color: #e74c3c;
+        }
+        .btn-danger:hover {
+            background-color: #c0392b;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+            font-weight: 600;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        #flowchart {
+            min-height: 300px;
+            border: 1px dashed #ccc;
+            border-radius: 8px;
+            padding: 15px;
+            background: white;
+        }
+        .hidden {
+            display: none;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Flowchart Generator</h1>
+    
+    <div class="container">
+        <!-- Panel Input -->
+        <div class="panel">
+            <h2>Tambah Node</h2>
+            <form id="node-form">
+                <div class="form-group">
+                    <label for="node-id">ID Node:</label>
+                    <input type="number" id="node-id" required placeholder="contoh: 1,2,3">
+                </div>
+                
+                <div class="form-group">
+                    <label for="node-name">Nama Kegiatan:</label>
+                    <input type="text" id="node-name" required placeholder="contoh: Verifikasi Dokumen">
+                </div>
+                
+                <div class="form-group">
+                    <label for="node-actor">Pelaksana:</label>
+                    <input type="text" id="node-actor" required placeholder="contoh: Admin, Sistem">
+                </div>
+                
+                <div class="form-group">
+                    <label for="node-type">Tipe Node:</label>
+                    <select id="node-type" required onchange="toggleConditionFields()">
+                        <option value="">Pilih tipe...</option>
+                        <option value="start">Awal</option>
+                        <option value="process">Proses</option>
+                        <option value="decision">Keputusan</option>
+                        <option value="end">Akhir</option>
+                    </select>
+                </div>
+                
+                <div id="next-step-field" class="form-group">
+                    <label for="node-next">Step Tujuan (ID):</label>
+                    <input type="text" id="node-next" placeholder="ID node tujuan">
+                </div>
+                
+                <div id="condition-fields" class="hidden">
+                    <div class="form-group">
+                        <label for="node-yes">Target Ya (ID):</label>
+                        <input type="text" id="node-yes" placeholder="ID node untuk 'Ya'">
+                    </div>
+                    <div class="form-group">
+                        <label for="node-no">Target Tidak (ID):</label>
+                        <input type="text" id="node-no" placeholder="ID node untuk 'Tidak'">
+                    </div>
+                </div>
+                
+                <button type="submit">Tambah Node</button>
+            </form>
+        </div>
+        
+        <!-- Panel Tabel & Flowchart -->
+        <div class="panel">
+            <h2>Daftar Node</h2>
+            <table id="node-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Step</th>
+                        <th>Pelaku</th>
+                        <th>Kegiatan</th>
+                        <th>Tujuan</th>
+                        <th>Ya</th>
+                        <th>Tidak</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+            
+            <div class="action-buttons">
+                <button id="generate-btn">Generate Flowchart</button>
+                <button id="clear-btn" class="btn-danger">Hapus Semua</button>
+            </div>
+            
+            <h2 style="margin-top: 30px;">Preview Flowchart</h2>
+            <div style="width: 80%;margin: 20px auto;text-align: center;">
+                <div id="flowchart" class="mermaid"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Inisialisasi Mermaid
+        mermaid.initialize({
+            startOnLoad: false,
+            theme: 'default',
+            flowchart: {
+                useMaxWidth: false,
+                htmlLabels: true,
+                curve: 'basis',
+                rankSpacing: 30
+            },
+            securityLevel: 'loose'
+        });
+
+        // Data nodes
+        let nodes = [];
+        
+        // Toggle fields berdasarkan tipe node
+        function toggleConditionFields() {
+            const nodeType = document.getElementById('node-type').value;
+            const conditionFields = document.getElementById('condition-fields');
+            const nextStepField = document.getElementById('next-step-field');
+            
+            if (nodeType === 'decision') {
+                conditionFields.classList.remove('hidden');
+                nextStepField.classList.add('hidden');
+            } else if (nodeType === 'end') {
+                conditionFields.classList.add('hidden');
+                nextStepField.classList.add('hidden');
+            } else {
+                conditionFields.classList.add('hidden');
+                nextStepField.classList.remove('hidden');
+            }
+        }
+        
+        // Handle form submission
+        document.getElementById('node-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const node = {
+                id: sanitizeId(document.getElementById('node-id').value),
+                name: document.getElementById('node-name').value,
+                actor: document.getElementById('node-actor').value,
+                type: document.getElementById('node-type').value,
+                next: document.getElementById('node-next').value,
+                yes: document.getElementById('node-yes').value,
+                no: document.getElementById('node-no').value
+            };
+            
+            if (!node.id || !node.name || !node.actor || !node.type) {
+                alert('Harap isi semua field wajib!');
+                return;
+            }
+            
+            addNodeToTable(node);
+            this.reset();
+            toggleConditionFields();
+        });
+        
+        // Sanitize ID untuk Mermaid
+        function sanitizeId(id) {
+            return id.replace(/[^\w-]/g, '_');
+        }
+        
+        // Tambah node ke tabel
+        function addNodeToTable(node) {
+            const tableBody = document.querySelector('#node-table tbody');
+            const row = document.createElement('tr');
+            
+            row.innerHTML = `
+                <td>${node.id}</td>
+                <td>${node.name}</td>
+                <td>${node.actor}</td>
+                <td>${getTypeName(node.type)}</td>
+                <td>${node.next || '-'}</td>
+                <td>${node.yes || '-'}</td>
+                <td>${node.no || '-'}</td>
+                <td><button onclick="deleteNode('${node.id}')">Hapus</button></td>
+            `;
+            
+            row.setAttribute('data-id', node.id);
+            tableBody.appendChild(row);
+            
+            // Update array nodes
+            const existingIndex = nodes.findIndex(n => n.id === node.id);
+            if (existingIndex >= 0) {
+                nodes[existingIndex] = node;
+            } else {
+                nodes.push(node);
+            }
+        }
+        
+        // Get display name untuk tipe node
+        function getTypeName(type) {
+            const types = {
+                'start': 'Awal',
+                'process': 'Proses',
+                'decision': 'Keputusan',
+                'finish': 'Akhir'
+            };
+            return types[type] || type;
+        }
+        
+        // Hapus node
+        function deleteNode(nodeId) {
+            if (confirm('Hapus node ini?')) {
+                // Hapus dari array
+                nodes = nodes.filter(node => node.id !== nodeId);
+                
+                // Hapus dari tabel
+                document.querySelector(`tr[data-id="${nodeId}"]`).remove();
+            }
+        }
+        
+        // Generate flowchart
+        document.getElementById('generate-btn').addEventListener('click', generateFlowchart);
+        
+        // Clear all
+        document.getElementById('clear-btn').addEventListener('click', function() {
+            if (confirm('Hapus semua node?')) {
+                nodes = [];
+                document.querySelector('#node-table tbody').innerHTML = '';
+                document.getElementById('flowchart').innerHTML = '';
+            }
+        });
+        
+        // Fungsi generate flowchart
+        function generateFlowchart() {
+            if (nodes.length === 0) {
+                alert('Belum ada node yang ditambahkan!');
+                return;
+            }
+            
+            let mermaidNodes = [];
+            let mermaidEdges = [];
+            
+            nodes.forEach(node => {
+                // Generate node
+                let nodeCode;
+                const label = `<u>${node.actor}</u><br>${node.name}`.replace(/\n/g, '<br>');
+                
+                switch(node.type) {
+                    case 'start':
+                        nodeCode = `${node.id}(["${label}"]):::start`;
+                        break;
+                    case 'finish':
+                        nodeCode = `${node.id}[("${label}")]:::finishStyle`;
+                        break;
+                    case 'decision':
+                        nodeCode = `${node.id}{"${label}"}:::decision`;
+                        break;
+                    default:
+                        nodeCode = `${node.id}["${label}"]:::process`;
+                }
+                mermaidNodes.push(nodeCode);
+                
+                // Generate edges
+                if (node.next && nodes.some(n => n.id === node.next)) {
+                    mermaidEdges.push(`${node.id} --> ${node.next}`);
+                }
+                if (node.yes && nodes.some(n => n.id === node.yes)) {
+                    mermaidEdges.push(`${node.id} -->|Ya| ${node.yes}`);
+                }
+                if (node.no && nodes.some(n => n.id === node.no)) {
+                    mermaidEdges.push(`${node.id} -->|Tidak| ${node.no}`);
+                }
+            });
+            
+            // const mermaidCode = `flowchart TD
+            //     ${mermaidNodes.join('\n')}
+            //     ${mermaidEdges.join('\n')}
+            //     classDef start fill:#2ecc71,stroke:#333,color:#fff
+            //     classDef process fill:#3498db,stroke:#333,color:#fff
+            //     classDef decision fill:#f39c12,stroke:#333,color:#fff
+            //     classDef finishStyle fill:#e74c3c,stroke:#333,color:#fff`;
+            
+
+            const mermaidCode = `flowchart TD
+                ${mermaidNodes.join('\n')}
+                ${mermaidEdges.join('\n')}`;
+            
+            const flowchartDiv = document.getElementById('flowchart');
+            flowchartDiv.innerHTML = mermaidCode;
+            
+            try {
+                mermaid.init(undefined, flowchartDiv);
+            } catch (e) {
+                console.error("Mermaid Error:", e);
+                flowchartDiv.innerHTML = `
+                    <div style="color:red; padding: 10px;">
+                        <strong>Error:</strong> ${e.message}
+                        <pre style="background: #f0f0f0; padding: 10px; margin-top: 10px;">${mermaidCode}</pre>
+                    </div>
+                `;
+            }
+        }
+        
+        // Inisialisasi awal
+        toggleConditionFields();
+    </script>
+</body>
+</html>
