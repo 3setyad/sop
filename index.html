@@ -3,38 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flowchart Generator</title>
-    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <title>Generator Flowchart Sederhana</title>
     <style>
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             margin: 0;
             padding: 20px;
-            background-color: #f5f7fa;
+            background-color: #f4f7f9;
             color: #333;
+            font-size: 14px;
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
         }
         .container {
             display: grid;
-            grid-template-columns: 350px 1fr;
-            gap: 20px;
-            max-width: 1200px;
-            margin: 0 auto;
+            grid-template-columns: 450px 1fr;
+            gap: 25px;
+            max-width: 1400px;
+            margin: 20px auto;
+        }
+        @media (max-width: 900px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
         }
         .panel {
             background: white;
             border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            padding: 20px;
-        }
-        h1 {
-            color: #2c3e50;
-            text-align: center;
-            margin-bottom: 30px;
+            padding: 25px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
         }
         h2 {
-            font-size: 1.2em;
+            font-size: 1.3em;
             color: #3498db;
-            border-bottom: 1px solid #eee;
+            border-bottom: 2px solid #f0f0f0;
             padding-bottom: 10px;
             margin-top: 0;
         }
@@ -43,355 +47,272 @@
         }
         label {
             display: block;
-            margin-bottom: 5px;
+            margin-bottom: 6px;
             font-weight: 600;
-            color: #555;
         }
         input, select {
             width: 100%;
             padding: 10px;
-            border: 1px solid #ddd;
+            border: 1px solid #ccc;
             border-radius: 4px;
             box-sizing: border-box;
-            font-family: inherit;
         }
         button {
-            background-color: #3498db;
-            color: white;
+            padding: 10px 18px;
             border: none;
-            padding: 10px 15px;
-            border-radius: 4px;
+            border-radius: 5px;
+            color: white;
             cursor: pointer;
             font-weight: 600;
-            transition: background-color 0.3s;
+            font-size: 14px;
+            transition: background-color 0.2s;
         }
-        button:hover {
-            background-color: #2980b9;
+        .btn-primary { background-color: #3498db; }
+        .btn-primary:hover { background-color: #2980b9; }
+        .btn-secondary { background-color: #2ecc71; }
+        .btn-secondary:hover { background-color: #27ae60; }
+        .btn-danger { background-color: #e74c3c; }
+        .btn-danger:hover { background-color: #c0392b; }
+        .btn-delete {
+            background-color: #f1c40f;
+            color:#333;
+            padding: 5px 10px;
+            font-size: 12px;
         }
-        .btn-danger {
-            background-color: #e74c3c;
-        }
-        .btn-danger:hover {
-            background-color: #c0392b;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
-        }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 10px;
-            text-align: left;
-        }
-        th {
-            background-color: #f2f2f2;
-            font-weight: 600;
-        }
-        tr:nth-child(even) {
-            background-color: #f9f9f9;
-        }
-        #flowchart {
-            min-height: 300px;
-            border: 1px dashed #ccc;
-            border-radius: 8px;
-            padding: 15px;
-            background: white;
+        .btn-delete:hover { background-color: #f39c12; }
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
         }
         .hidden {
             display: none;
         }
-        .action-buttons {
+        #node-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        #node-table th, #node-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+            font-size: 13px;
+        }
+        #node-table th {
+            background-color: #f2f2f2;
+        }
+        #flowchart-preview {
+            border: 1px dashed #ccc;
+            border-radius: 8px;
+            padding: 20px;
+            min-height: 400px;
             display: flex;
-            gap: 10px;
-            margin-top: 15px;
+            justify-content: center;
+            align-items: center;
+            background-color: #fdfdfd;
+            overflow: auto;
         }
     </style>
 </head>
 <body>
-    <h1>Flowchart Generator</h1>
-    
+
+    <h1>Generator Flowchart dari Form Input</h1>
+
     <div class="container">
-        <!-- Panel Input -->
+        <!-- Kolom Kiri -->
         <div class="panel">
-            <h2>Tambah Node</h2>
+            <h2>1. Form Input Node</h2>
             <form id="node-form">
                 <div class="form-group">
-                    <label for="node-id">ID Node:</label>
-                    <input type="number" id="node-id" required placeholder="contoh: 1,2,3">
+                    <label for="node-id">ID Node (Unik)</label>
+                    <input type="text" id="node-id" required placeholder="Contoh: A1, verif_data">
                 </div>
-                
                 <div class="form-group">
-                    <label for="node-name">Nama Kegiatan:</label>
-                    <input type="text" id="node-name" required placeholder="contoh: Verifikasi Dokumen">
+                    <label for="node-name">Nama Kegiatan</label>
+                    <input type="text" id="node-name" required placeholder="Contoh: Memverifikasi Dokumen">
                 </div>
-                
                 <div class="form-group">
-                    <label for="node-actor">Pelaksana:</label>
-                    <input type="text" id="node-actor" required placeholder="contoh: Admin, Sistem">
+                    <label for="node-actor">Pelaksana</label>
+                    <input type="text" id="node-actor" required placeholder="Contoh: Staf Admin">
                 </div>
-                
                 <div class="form-group">
-                    <label for="node-type">Tipe Node:</label>
-                    <select id="node-type" required onchange="toggleConditionFields()">
-                        <option value="">Pilih tipe...</option>
-                        <option value="start">Awal</option>
+                    <label for="node-type">Tipe Node</label>
+                    <select id="node-type" required>
+                        <option value="">-- Pilih Tipe --</option>
+                        <option value="start">Mulai</option>
                         <option value="process">Proses</option>
                         <option value="decision">Keputusan</option>
-                        <option value="end">Akhir</option>
+                        <option value="end">Selesai</option>
                     </select>
                 </div>
-                
-                <div id="next-step-field" class="form-group">
-                    <label for="node-next">Step Tujuan (ID):</label>
-                    <input type="text" id="node-next" placeholder="ID node tujuan">
+
+                <div id="field-next-step" class="form-group hidden">
+                    <label for="node-next">Terhubung ke ID Node</label>
+                    <input type="text" id="node-next" placeholder="ID node selanjutnya">
                 </div>
-                
-                <div id="condition-fields" class="hidden">
+                <div id="field-decision" class="hidden">
                     <div class="form-group">
-                        <label for="node-yes">Target Ya (ID):</label>
-                        <input type="text" id="node-yes" placeholder="ID node untuk 'Ya'">
+                        <label for="node-yes">Jika YA, terhubung ke ID</label>
+                        <input type="text" id="node-yes" placeholder="ID untuk cabang 'YA'">
                     </div>
                     <div class="form-group">
-                        <label for="node-no">Target Tidak (ID):</label>
-                        <input type="text" id="node-no" placeholder="ID node untuk 'Tidak'">
+                        <label for="node-no">Jika TIDAK, terhubung ke ID</label>
+                        <input type="text" id="node-no" placeholder="ID untuk cabang 'TIDAK'">
                     </div>
                 </div>
-                
-                <button type="submit">Tambah Node</button>
+
+                <button type="submit" class="btn-primary">Tambah / Update Node</button>
             </form>
-        </div>
-        
-        <!-- Panel Tabel & Flowchart -->
-        <div class="panel">
-            <h2>Daftar Node</h2>
+
+            <h2 style="margin-top: 30px;">2. Daftar Node</h2>
             <table id="node-table">
                 <thead>
                     <tr>
                         <th>ID</th>
-                        <th>Step</th>
-                        <th>Pelaku</th>
                         <th>Kegiatan</th>
-                        <th>Tujuan</th>
-                        <th>Ya</th>
-                        <th>Tidak</th>
+                        <th>Pelaksana</th>
+                        <th>Tipe</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
-                <tbody></tbody>
+                <tbody>
+                </tbody>
             </table>
-            
             <div class="action-buttons">
-                <button id="generate-btn">Generate Flowchart</button>
-                <button id="clear-btn" class="btn-danger">Hapus Semua</button>
+                <button id="clear-all-btn" class="btn-danger">Hapus Semua Node</button>
             </div>
-            
-            <h2 style="margin-top: 30px;">Preview Flowchart</h2>
-            <div style="width: 80%;margin: 20px auto;text-align: center;">
-                <div id="flowchart" class="mermaid"></div>
+        </div>
+
+        <!-- Kolom Kanan -->
+        <div class="panel">
+            <h2>3. Preview & Export</h2>
+             <div class="action-buttons">
+                <button id="generate-flowchart-btn" class="btn-secondary">Generate Flowchart</button>
+                <button id="preview-pdf-btn" class="btn-primary">Pratinjau PDF Flowchart</button>
+            </div>
+            <div id="flowchart-preview" style="margin-top: 20px;">
+                <p>Klik "Generate Flowchart" untuk melihat hasilnya di sini.</p>
             </div>
         </div>
     </div>
 
+    <!-- Library -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    
     <script>
-        // Inisialisasi Mermaid
-        mermaid.initialize({
-            startOnLoad: false,
-            theme: 'default',
-            flowchart: {
-                useMaxWidth: false,
-                htmlLabels: true,
-                curve: 'basis',
-                rankSpacing: 30
-            },
-            securityLevel: 'loose'
-        });
+        document.addEventListener('DOMContentLoaded', () => {
+            mermaid.initialize({ startOnLoad: false, theme: 'default' });
 
-        // Data nodes
-        let nodes = [];
-        
-        // Toggle fields berdasarkan tipe node
-        function toggleConditionFields() {
-            const nodeType = document.getElementById('node-type').value;
-            const conditionFields = document.getElementById('condition-fields');
-            const nextStepField = document.getElementById('next-step-field');
-            
-            if (nodeType === 'decision') {
-                conditionFields.classList.remove('hidden');
-                nextStepField.classList.add('hidden');
-            } else if (nodeType === 'end') {
-                conditionFields.classList.add('hidden');
-                nextStepField.classList.add('hidden');
-            } else {
-                conditionFields.classList.add('hidden');
-                nextStepField.classList.remove('hidden');
-            }
-        }
-        
-        // Handle form submission
-        document.getElementById('node-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const node = {
-                id: sanitizeId(document.getElementById('node-id').value),
-                name: document.getElementById('node-name').value,
-                actor: document.getElementById('node-actor').value,
-                type: document.getElementById('node-type').value,
-                next: document.getElementById('node-next').value,
-                yes: document.getElementById('node-yes').value,
-                no: document.getElementById('node-no').value
+            // (Kode lainnya tetap sama)
+            let flowchartNodes = [];
+            const nodeForm = document.getElementById('node-form');
+            const nodeTypeSelect = document.getElementById('node-type');
+            const fieldNextStep = document.getElementById('field-next-step');
+            const fieldDecision = document.getElementById('field-decision');
+            const nodeTableBody = document.querySelector('#node-table tbody');
+            const flowchartPreview = document.getElementById('flowchart-preview');
+
+            const toggleConditionalInputs = () => {
+                const type = nodeTypeSelect.value;
+                fieldNextStep.classList.add('hidden');
+                fieldDecision.classList.add('hidden');
+                if (type === 'start' || type === 'process') {
+                    fieldNextStep.classList.remove('hidden');
+                } else if (type === 'decision') {
+                    fieldDecision.classList.remove('hidden');
+                }
             };
-            
-            if (!node.id || !node.name || !node.actor || !node.type) {
-                alert('Harap isi semua field wajib!');
-                return;
-            }
-            
-            addNodeToTable(node);
-            this.reset();
-            toggleConditionFields();
-        });
-        
-        // Sanitize ID untuk Mermaid
-        function sanitizeId(id) {
-            return id.replace(/[^\w-]/g, '_');
-        }
-        
-        // Tambah node ke tabel
-        function addNodeToTable(node) {
-            const tableBody = document.querySelector('#node-table tbody');
-            const row = document.createElement('tr');
-            
-            row.innerHTML = `
-                <td>${node.id}</td>
-                <td>${node.name}</td>
-                <td>${node.actor}</td>
-                <td>${getTypeName(node.type)}</td>
-                <td>${node.next || '-'}</td>
-                <td>${node.yes || '-'}</td>
-                <td>${node.no || '-'}</td>
-                <td><button onclick="deleteNode('${node.id}')">Hapus</button></td>
-            `;
-            
-            row.setAttribute('data-id', node.id);
-            tableBody.appendChild(row);
-            
-            // Update array nodes
-            const existingIndex = nodes.findIndex(n => n.id === node.id);
-            if (existingIndex >= 0) {
-                nodes[existingIndex] = node;
-            } else {
-                nodes.push(node);
-            }
-        }
-        
-        // Get display name untuk tipe node
-        function getTypeName(type) {
-            const types = {
-                'start': 'Awal',
-                'process': 'Proses',
-                'decision': 'Keputusan',
-                'finish': 'Akhir'
+            const renderTable = () => {
+                nodeTableBody.innerHTML = '';
+                flowchartNodes.forEach(node => {
+                    const row = nodeTableBody.insertRow();
+                    row.innerHTML = `
+                        <td>${node.id}</td><td>${node.name}</td><td>${node.actor}</td><td>${node.type}</td>
+                        <td><button class="btn-delete" onclick="window.app.deleteNode('${node.id}')">Hapus</button></td>
+                    `;
+                });
             };
-            return types[type] || type;
-        }
-        
-        // Hapus node
-        function deleteNode(nodeId) {
-            if (confirm('Hapus node ini?')) {
-                // Hapus dari array
-                nodes = nodes.filter(node => node.id !== nodeId);
-                
-                // Hapus dari tabel
-                document.querySelector(`tr[data-id="${nodeId}"]`).remove();
-            }
-        }
-        
-        // Generate flowchart
-        document.getElementById('generate-btn').addEventListener('click', generateFlowchart);
-        
-        // Clear all
-        document.getElementById('clear-btn').addEventListener('click', function() {
-            if (confirm('Hapus semua node?')) {
-                nodes = [];
-                document.querySelector('#node-table tbody').innerHTML = '';
-                document.getElementById('flowchart').innerHTML = '';
-            }
-        });
-        
-        // Fungsi generate flowchart
-        function generateFlowchart() {
-            if (nodes.length === 0) {
-                alert('Belum ada node yang ditambahkan!');
-                return;
-            }
-            
-            let mermaidNodes = [];
-            let mermaidEdges = [];
-            
-            nodes.forEach(node => {
-                // Generate node
-                let nodeCode;
-                const label = `<u>${node.actor}</u><br>${node.name}`.replace(/\n/g, '<br>');
-                
-                switch(node.type) {
-                    case 'start':
-                        nodeCode = `${node.id}(["${label}"]):::start`;
-                        break;
-                    case 'finish':
-                        nodeCode = `${node.id}[("${label}")]:::finishStyle`;
-                        break;
-                    case 'decision':
-                        nodeCode = `${node.id}{"${label}"}:::decision`;
-                        break;
-                    default:
-                        nodeCode = `${node.id}["${label}"]:::process`;
+            window.app = {
+                deleteNode: (id) => { if (confirm(`Yakin ingin menghapus node dengan ID "${id}"?`)) { flowchartNodes = flowchartNodes.filter(node => node.id !== id); renderTable(); }}
+            };
+            nodeForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const id = document.getElementById('node-id').value.trim().replace(/\s+/g, '_'); if (!id) { alert('ID Node tidak boleh kosong.'); return; }
+                const newNode = { id: id, name: document.getElementById('node-name').value, actor: document.getElementById('node-actor').value, type: document.getElementById('node-type').value, next: document.getElementById('node-next').value.trim().replace(/\s+/g, '_'), yes: document.getElementById('node-yes').value.trim().replace(/\s+/g, '_'), no: document.getElementById('node-no').value.trim().replace(/\s+/g, '_'), };
+                const existingNodeIndex = flowchartNodes.findIndex(n => n.id === newNode.id);
+                if (existingNodeIndex > -1) { flowchartNodes[existingNodeIndex] = newNode; } else { flowchartNodes.push(newNode); }
+                renderTable(); nodeForm.reset(); toggleConditionalInputs(); document.getElementById('node-id').focus();
+            });
+            document.getElementById('generate-flowchart-btn').addEventListener('click', async () => {
+                if (flowchartNodes.length === 0) { flowchartPreview.innerHTML = '<p>Tidak ada data. Silakan tambahkan node.</p>'; return; }
+                let mermaidSyntax = 'graph TD\n';
+                flowchartNodes.forEach(node => { const label = `<b>${node.actor} :</b>\n ${node.name}`.replace(/"/g, '#quot;'); let shape = `[${label}]`; if (node.type === 'start' || node.type === 'end') shape = `([${label}])`; if (node.type === 'decision') shape = `{${label}}`; mermaidSyntax += `    ${node.id}${shape}\n`; });
+                flowchartNodes.forEach(node => { if (node.next) mermaidSyntax += `    ${node.id} --> ${node.next}\n`; if (node.yes) mermaidSyntax += `    ${node.id} -- Ya --> ${node.yes}\n`; if (node.no) mermaidSyntax += `    ${node.id} -- Tidak --> ${node.no}\n`; });
+                flowchartPreview.innerHTML = 'Merender...';
+                try { const { svg } = await mermaid.render('graphDiv', mermaidSyntax); flowchartPreview.innerHTML = svg; } catch (error) { flowchartPreview.innerHTML = `<p style="color:red;"><b>Error:</b> ${error.message}</p><pre>${mermaidSyntax}</pre>`; console.error(error); }
+            });
+
+            // --- PERUBAHAN UTAMA ADA DI SINI ---
+            document.getElementById('preview-pdf-btn').addEventListener('click', () => {
+                const svgElement = flowchartPreview.querySelector('svg');
+                if (!svgElement) {
+                    alert('Silakan generate flowchart terlebih dahulu.');
+                    return;
                 }
-                mermaidNodes.push(nodeCode);
                 
-                // Generate edges
-                if (node.next && nodes.some(n => n.id === node.next)) {
-                    mermaidEdges.push(`${node.id} --> ${node.next}`);
-                }
-                if (node.yes && nodes.some(n => n.id === node.yes)) {
-                    mermaidEdges.push(`${node.id} -->|Ya| ${node.yes}`);
-                }
-                if (node.no && nodes.some(n => n.id === node.no)) {
-                    mermaidEdges.push(`${node.id} -->|Tidak| ${node.no}`);
+                // Langkah 1: Ambil semua elemen teks dan simpan ukuran font aslinya
+                const textElements = svgElement.querySelectorAll('text');
+                const originalFontSizes = [];
+
+                textElements.forEach(text => {
+                    originalFontSizes.push(text.style.fontSize); // Simpan ukuran asli (mungkin kosong)
+                    // Langkah 2: Atur ukuran font baru secara paksa untuk PDF
+                    text.style.fontSize = '1px'; // Anda bisa mengubah nilai ini (cth: '8px', '9px')
+                });
+
+                // Langkah 3: Jalankan html2canvas pada elemen yang sudah diubah
+                html2canvas(flowchartPreview, { scale: 3, useCORS: true, backgroundColor: '#ffffff' })
+                    .then(canvas => {
+                        const imgData = canvas.toDataURL('image/png');
+                        const { jsPDF } = window.jspdf;
+                        const pdf = new jsPDF('p', 'mm', 'a4');
+                        const pdfWidth = pdf.internal.pageSize.getWidth() - 20;
+                        const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+                        pdf.addImage(imgData, 'PNG', 10, 10, pdfWidth, pdfHeight);
+                        const pdfBlob = pdf.output('blob');
+                        const blobUrl = URL.createObjectURL(pdfBlob);
+                        const newWindow = window.open(blobUrl, '_blank');
+                        if (!newWindow) {
+                            alert('Browser memblokir pop-up. Izinkan pop-up untuk situs ini.');
+                        }
+                    })
+                    .catch(err => {
+                        console.error("Error saat membuat PDF:", err);
+                        alert("Gagal membuat pratinjau PDF.");
+                    })
+                    .finally(() => {
+                        // Langkah 4 (PENTING): Kembalikan ukuran font ke aslinya
+                        textElements.forEach((text, index) => {
+                            text.style.fontSize = originalFontSizes[index];
+                        });
+                    });
+            });
+
+            document.getElementById('clear-all-btn').addEventListener('click', () => {
+                if (confirm('Anda yakin ingin menghapus semua node?')) {
+                    flowchartNodes = [];
+                    renderTable();
+                    flowchartPreview.innerHTML = '<p>Klik "Generate Flowchart" untuk melihat hasilnya di sini.</p>';
                 }
             });
-            
-            // const mermaidCode = `flowchart TD
-            //     ${mermaidNodes.join('\n')}
-            //     ${mermaidEdges.join('\n')}
-            //     classDef start fill:#2ecc71,stroke:#333,color:#fff
-            //     classDef process fill:#3498db,stroke:#333,color:#fff
-            //     classDef decision fill:#f39c12,stroke:#333,color:#fff
-            //     classDef finishStyle fill:#e74c3c,stroke:#333,color:#fff`;
-            
 
-            const mermaidCode = `flowchart TD
-                ${mermaidNodes.join('\n')}
-                ${mermaidEdges.join('\n')}`;
-            
-            const flowchartDiv = document.getElementById('flowchart');
-            flowchartDiv.innerHTML = mermaidCode;
-            
-            try {
-                mermaid.init(undefined, flowchartDiv);
-            } catch (e) {
-                console.error("Mermaid Error:", e);
-                flowchartDiv.innerHTML = `
-                    <div style="color:red; padding: 10px;">
-                        <strong>Error:</strong> ${e.message}
-                        <pre style="background: #f0f0f0; padding: 10px; margin-top: 10px;">${mermaidCode}</pre>
-                    </div>
-                `;
-            }
-        }
-        
-        // Inisialisasi awal
-        toggleConditionFields();
+            nodeTypeSelect.addEventListener('change', toggleConditionalInputs);
+        });
     </script>
+
 </body>
 </html>
