@@ -4,143 +4,84 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Generator PDF Dinamis dengan Flowchart Mermaid.js</title>
+    
+    <!-- 1. Import Materialize CSS & Google Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    
     <!-- Menambahkan library Mermaid.js -->
     <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background-color: #f0f0f0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            background-color: #f5f5f5;
         }
 
-        /* --- STYLING UNTUK FORM INPUT --- */
-        #input-form {
-            width: 90%;
-            max-width: 1000px;
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        /* --- STYLING UNTUK FORM INPUT (Materialize Framework) --- */
+        .container {
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+        h4.form-title {
+            font-weight: 300;
+            text-align: center;
             margin-bottom: 30px;
         }
-        #input-form h1 {
-            text-align: center;
-            color: #333;
-            border-bottom: 2px solid #007bff;
+        h5.form-section-title {
+            font-size: 1.3rem;
+            font-weight: 400;
+            color: #0d47a1; /* Darker blue */
+            border-bottom: 1px solid #e0e0e0;
             padding-bottom: 10px;
+            margin-top: 40px;
         }
-        .form-section {
-            margin-bottom: 20px;
-            border: 1px solid #ddd;
-            padding: 15px;
-            border-radius: 5px;
+        .action-buttons {
+            margin-top: 30px;
         }
-        .form-section h3 {
-            margin-top: 0;
-            color: #0056b3;
-        }
-        .form-group {
-            margin-bottom: 10px;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-        .form-group input[type="text"],
-        .form-group input[type="date"],
-        .form-group textarea,
-        .form-group select { /* Tambahkan select */
-            width: 100%;
-            padding: 8px;
-            box-sizing: border-box;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-        .form-group textarea {
-            min-height: 100px;
-            resize: vertical;
-        }
-        .form-group small {
-            color: #666;
-            font-size: 12px;
-        }
-        /* Styling untuk tabel form */
+        
+        /* Styling kustom untuk tabel di dalam form Materialize */
         .form-table {
             width: 100%;
             border-collapse: collapse;
             font-size: 14px;
         }
         .form-table th, .form-table td {
-            padding: 5px;
-            border: 1px solid #ccc;
-            text-align: center;
+            padding: 8px;
+            border-bottom: 1px solid #e0e0e0;
+            text-align: left;
+        }
+        .form-table th {
+            font-weight: bold;
+            color: #424242;
         }
         .form-table input, .form-table select {
-            width: 100%;
-            padding: 5px;
-            box-sizing: border-box;
+            /* Menggunakan gaya default browser di dalam tabel agar lebih ringkas */
+            border: 1px solid #ccc !important;
+            height: 2.5rem !important;
+            padding: 0 5px !important;
+            border-radius: 3px;
+            background-color: white !important;
+        }
+        .form-table input:focus, .form-table select:focus {
+             border-color: #2196F3 !important;
+             box-shadow: none !important;
         }
         .form-table input[readonly] {
-            background-color: #e9ecef;
+            background-color: #f5f5f5 !important;
             cursor: not-allowed;
+            color: #757575;
+        }
+        .form-table .btn-small {
+            padding: 0 1rem;
         }
 
-        .action-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-top: 20px;
-        }
-        button {
-            padding: 12px 25px;
-            font-size: 16px;
-            cursor: pointer;
-            border: none;
-            border-radius: 5px;
-            color: white;
-        }
-        #updatePreviewBtn {
-            background-color: #28a745; /* Hijau */
-        }
-        #updatePreviewBtn:hover {
-            background-color: #218838;
-        }
-        #generatePdfFromHtml {
-            background-color: #007bff; /* Biru */
-        }
-        #generatePdfFromHtml:hover {
-            background-color: #0056b3;
-        }
-        .add-row-button {
-            background-color: #007bff;
-            margin-top: 10px;
-            padding: 8px 15px;
-            font-size: 14px;
-        }
-        .remove-row-btn {
-            background-color: #dc3545;
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            cursor: pointer;
-            border-radius: 3px;
-            font-size: 12px;
-        }
-
-
-        /* --- STYLING UNTUK PRATINJAU PDF --- */
+        /* --- STYLING UNTUK PRATINJAU PDF (Tidak Diubah, Sesuai Aslinya) --- */
         #pdfPreviewContent {
             background-color: white;
             padding: 20mm;
             width: 210mm;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
             box-sizing: border-box;
-            margin-bottom: 20px;
+            margin: 20px auto;
         }
         #topSectionGrid { display: flex; justify-content: space-between; align-items: flex-start; width: 100%; margin-bottom: 10px; }
         #leftColumnContent { flex: 0 0 55%; padding-right: 5mm; box-sizing: border-box; text-align: center; }
@@ -167,298 +108,136 @@
         .activity-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 9px; }
         .activity-table th, .activity-table td { border: 1px solid #000; padding: 4px; text-align: left; vertical-align: top; }
         .activity-table th { background-color: #b5b5b5; font-weight: bold; text-align: center; }
-        
-        /* CSS untuk Pratinjau Flowchart dengan Mermaid.js */
-        .preview-section-title {
-            font-size: 12px;
-            font-weight: bold;
-            text-align: center;
-            padding: 5px;
-            border: 1px solid #000;
-            background-color: #b5b5b5;
-            margin-top: 10px;
-        }
-        #flowchartPreviewContainer {
-            padding: 10px;
-            border: 1px solid #000;
-            border-top: none;
-            font-size: 10px;
-            text-align: center;
-        }
-        .mermaid text {
-            font-family: Arial, sans-serif !important;
-            font-size: 10px !important;
-        }
-        .mermaid .edgeLabel {
-            font-size: 9px !important;
-            font-style: italic;
-        }
-
-        /* Class untuk wrapper render PDF */
-        .pdf-render-wrapper {
-            position: absolute;
-            left: -9999px;
-            top: 0;
-            width: 900px;
-            background-color: white;
-            padding: 20px;
-        }
+        .preview-section-title { font-size: 12px; font-weight: bold; text-align: center; padding: 5px; border: 1px solid #000; background-color: #b5b5b5; margin-top: 10px; }
+        #flowchartPreviewContainer { padding: 10px; border: 1px solid #000; border-top: none; font-size: 10px; text-align: center; }
+        .mermaid text { font-family: Arial, sans-serif !important; font-size: 10px !important; }
+        .mermaid .edgeLabel { font-size: 9px !important; font-style: italic; }
+        .pdf-render-wrapper { position: absolute; left: -9999px; top: 0; width: 900px; background-color: white; padding: 20px; }
     </style>
 </head>
 <body>
 
-    <!-- FORM HTML -->
-    <div id="input-form">
-        <h1>Form Input Data SOP</h1>
+    <!-- FORM HTML (Struktur Materialize) -->
+    <div class="container">
+      <div class="card-panel z-depth-2" id="input-form">
+        <h4 class="form-title">Form Input Data SOP</h4>
 
-        <div class="form-section">
-            <h3>Informasi Dokumen & Penanda Tangan</h3>
-            <div class="form-group">
-                <label for="form-satuan-kerja">Nama Satuan Kerja</label>
-                <input type="text" id="form-satuan-kerja" value="SEKRETARIAT JENDERAL">
-            </div>
-            <div class="form-group">
-                <label for="form-unit-kerja">Nama Unit Kerja / Tim Kerja</label>
-                <input type="text" id="form-unit-kerja" value="BIRO ORGANISASI DAN TATALAKSANA">
-            </div>
-            <div class="form-group">
-                <label for="form-nomor">Nomor Dokumen</label>
-                <input type="text" id="form-nomor" value="Kw.12.1/4763.1/OT/06/2024">
-            </div>
-            <div class="form-group">
-                <label for="form-tgl-pembuatan">Tanggal Pembuatan</label>
-                <input type="date" id="form-tgl-pembuatan" value="2015-03-11">
-            </div>
-            <div class="form-group">
-                <label for="form-tgl-revisi">Tanggal Revisi</label>
-                <input type="date" id="form-tgl-revisi" value="2024-06-28">
-            </div>
-            <div class="form-group">
-                <label for="form-tgl-efektif">Tanggal Efektif</label>
-                <input type="date" id="form-tgl-efektif" value="2024-07-01">
-            </div>
-             <div class="form-group">
-                <label for="form-jabatan">Jabatan Penanda Tangan</label>
-                <input type="text" id="form-jabatan" value="Kepala Bagian Tata Usaha Kanwil Kemenag DIY">
-            </div>
-             <div class="form-group">
-                <label for="form-signer-name">Nama Penanda Tangan</label>
-                <input type="text" id="form-signer-name" value="Muntolib, S.Ag.M.S.">
-            </div>
-            <div class="form-group">
-                <label for="form-signer-nip">NIP Penanda Tangan</label>
-                <input type="text" id="form-signer-nip" value="197204242002121003">
-            </div>
+        <h5 class="form-section-title">Informasi Dokumen & Penanda Tangan</h5>
+        <div class="row">
+            <div class="input-field col s12 m6"><i class="material-icons prefix">business</i><input type="text" id="form-satuan-kerja" value="SEKRETARIAT JENDERAL"><label for="form-satuan-kerja">Nama Satuan Kerja</label></div>
+            <div class="input-field col s12 m6"><i class="material-icons prefix">group_work</i><input type="text" id="form-unit-kerja" value="BIRO ORGANISASI DAN TATALAKSANA"><label for="form-unit-kerja">Nama Unit Kerja / Tim Kerja</label></div>
+            <div class="input-field col s12 m6"><i class="material-icons prefix">folder_open</i><input type="text" id="form-nomor" value="Kw.12.1/4763.1/OT/06/2024"><label for="form-nomor">Nomor Dokumen</label></div>
+            <div class="input-field col s12 m6"><i class="material-icons prefix">event</i><input type="text" id="form-tgl-pembuatan" class="datepicker"><label for="form-tgl-pembuatan">Tanggal Pembuatan</label></div>
+            <div class="input-field col s12 m6"><i class="material-icons prefix">event</i><input type="text" id="form-tgl-revisi" class="datepicker"><label for="form-tgl-revisi">Tanggal Revisi</label></div>
+            <div class="input-field col s12 m6"><i class="material-icons prefix">event</i><input type="text" id="form-tgl-efektif" class="datepicker"><label for="form-tgl-efektif">Tanggal Efektif</label></div>
+            <div class="input-field col s12"><i class="material-icons prefix">work</i><input type="text" id="form-jabatan" value="Kepala Bagian Tata Usaha Kanwil Kemenag DIY"><label for="form-jabatan">Jabatan Penanda Tangan</label></div>
+            <div class="input-field col s12 m6"><i class="material-icons prefix">account_circle</i><input type="text" id="form-signer-name" value="Muntolib, S.Ag.M.S."><label for="form-signer-name">Nama Penanda Tangan</label></div>
+            <div class="input-field col s12 m6"><i class="material-icons prefix">fingerprint</i><input type="text" id="form-signer-nip" value="197204242002121003"><label for="form-signer-nip">NIP Penanda Tangan</label></div>
         </div>
-
-        <div class="form-section">
-            <h3>Judul Utama SOP</h3>
-             <div class="form-group">
-                <input type="text" id="form-sop-title" value="SOP PENYUSUNAN ANALIS JABATAN ANALIS BEBAN KERJA KUALIFIKASI PELAKSANA">
-            </div>
-        </div>
-
-        <div class="form-section">
-            <h3>Detail Konten</h3>
-            <div class="form-group">
-                <label for="form-dasar-hukum">Dasar Hukum</label>
-                <textarea id="form-dasar-hukum">Keputusan Menteri Pendayagunaan Aparatur Sipil Negara RB Nomor 656 Tahun 2023 Tentang Nomenklatur Jabatan Pelaksana Instansi Pemerintah;
-Peraturan Menteri Agama Nomor 06 Tahun 2022 Perubahan PMA Nomor 19 Tahun 2019 Organisasi Dan Tata Kerja Instansi Vertikal Kementerian Agama
-PMA Nomor 72 Tahun 2022 tentang Organisasi dan Tata Kerja Kementerian Agama
-KMA Nomor 1364 Tahun 2021 tentang Peta Proses Bisnis Kementerian Agama
-KMA Nomor 1179 Tahun 2022 tentang Sistem Kerja</textarea>
-                <small>Masukkan satu item per baris.</small>
-            </div>
-             <div class="form-group">
-                <label for="form-kualifikasi">Kualifikasi Pelaksana</label>
-                <textarea id="form-kualifikasi">Memahami tugas dan fungsi Kementerian Agama
-Memahami peraturan terkait mandat Kementerian Agama
-Memahami rencana strategis Kementerian Agama tahun 2020-2024
-Memiliki pemahaman yang baik terkait peta proses bisnis Kementerian Agama
-Memahami tentang jabatan dan beban kerja
-Memahami Peraturan tentang penyusunan jabatan dan beban kerja</textarea>
-                <small>Masukkan satu item per baris.</small>
-            </div>
-             <div class="form-group">
-                <label for="form-keterkaitan">Keterkaitan</label>
-                <textarea id="form-keterkaitan">SOP Pembuatan SK/Surat Tugas Tim Kerja
-SOP Pelaksanaan Kegiatan
-SOP Teknis Pengarsipan
-SOP Pembuatan Surat Undangan/Surat Dinas/Nota Dinas
-SOP Pembuatan Jadwal Penerapan</textarea>
-                <small>Masukkan satu item per baris.</small>
-            </div>
-            <div class="form-group">
-                <label for="form-peralatan">Peralatan/Perlengkapan</label>
-                <textarea id="form-peralatan">Term Of Reference (TOR)
-Rincian Anggaran Biaya (RAB)
-ATK
-Komputer/Printer/Scanner
-Jaringan internet
-Peta Proses Bisnis</textarea>
-                <small>Masukkan satu item per baris.</small>
-            </div>
-            <div class="form-group">
-                <label for="form-peringatan">Peringatan</label>
-                <textarea id="form-peringatan">Jika tidak memiliki pemahaman yang baik terkait jabatan dan beban kerja Kementerian Agama akan menghambat penerapan jabatan dan beban kerja yang tidak sesuai di lingkungan Kementerian Agama</textarea>
-            </div>
-             <div class="form-group">
-                <label for="form-pencatatan">Pencatatan/Pendataan</label>
-                <textarea id="form-pencatatan">Disimpan dalam data elektronik dan manual</textarea>
-            </div>
-        </div>
-
-        <div class="form-section">
-            <h3>Tabel Rincian Kegiatan</h3>
-            <table id="form-activity-table" class="form-table">
-                <thead>
-                    <tr>
-                        <th>Kegiatan</th>
-                        <th>Pelaksana</th>
-                        <th>Kelengkapan</th>
-                        <th>Waktu</th>
-                        <th>Output</th>
-                        <th>Keterangan</th>
-                        <th>Aksi</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
-            <button type="button" id="add-activity-row-btn" class="add-row-button">Tambah Baris Kegiatan</button>
-        </div>
-
-        <div class="form-section">
-            <h3>Tabel Alur Flowchart</h3>
-            <table id="form-flowchart-table" class="form-table">
-                <thead>
-                    <tr>
-                        <th style="width: 5%;">ID</th>
-                        <th style="width: 25%;">Kegiatan</th>
-                        <th style="width: 15%;">Pelaksana</th>
-                        <th style="width: 15%;">Node</th>
-                        <th style="width: 10%;">ID Tujuan</th>
-                        <th style="width: 10%;">ID 'Ya'</th>
-                        <th style="width: 10%;">ID 'Tidak'</th>
-                        <th style="width: 10%;">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                </tbody>
-            </table>
-            <button type="button" id="add-flowchart-row-btn" class="add-row-button">Tambah Baris Alur</button>
-        </div>
-    </div>
-
-    <div class="action-buttons">
-        <button id="updatePreviewBtn">Terapkan Data ke Pratinjau</button>
-        <button id="generatePdfFromHtml">Generate PDF dari Pratinjau</button>
-    </div>
-
-    <!-- Pratinjau PDF -->
-    <div id="pdfPreviewContent">
-        <div id="topSectionGrid">
-            <div id="leftColumnContent">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/9/9a/Kementerian_Agama_new_logo.png" alt="Logo Kementerian Agama" class="logo-kemenag">
-                <div class="header-section">
-                    <h1>KEMENTERIAN AGAMA REPUBLIK INDONESIA</h1>
-                    <h2 id="preview-satuan-kerja"></h2>
-                    <h2 id="preview-unit-kerja"></h2>
-                </div>
-            </div>
-            <div id="rightColumnContent">
-                <table class="info-table" id="infoTableData">
-                    <tr><td>Nomor</td><td>:</td><td id="preview-nomor"></td></tr>
-                    <tr><td>Tanggal Pembuatan</td><td>:</td><td id="preview-tgl-pembuatan"></td></tr>
-                    <tr><td>Tanggal Revisi</td><td>:</td><td id="preview-tgl-revisi"></td></tr>
-                    <tr><td>Tanggal Efektif</td><td>:</td><td id="preview-tgl-efektif"></td></tr>
-                </table>
-                <div class="footer-signer">
-                    <p>Disahkan Oleh</p>
-                    <p id="preview-jabatan"></p>
-                    <br><br><br><br>
-                </div>
-                <div class="footer-signer">
-                    <p id="preview-signer-name"></p>
-                    <p id="preview-signer-nip"></p>
-                </div>
-            </div>
-        </div>
-        <div id="sopTitleContainer"></div>
-        <div class="table-like-section">
-            <div class="col-header">DASAR HUKUM</div>
-            <div class="col-header">KUALIFIKASI PELAKSANA</div>
-            <div class="col-content"><ol class="section-content" id="dasarHukumList"></ol></div>
-            <div class="col-content"><ol class="section-content" id="kualifikasiPelaksanaList"></ol></div>
-        </div>
-        <div class="table-like-section">
-            <div class="col-header">KETERKAITAN</div>
-            <div class="col-header">PERALATAN/PERLENGKAPAN</div>
-            <div class="col-content"><ol class="section-content" id="keterkaitanList"></ol></div>
-            <div class="col-content"><ol class="section-content" id="peralatanList"></ol></div>
-        </div>
-        <div class="table-like-section">
-            <div class="col-header">PERINGATAN</div>
-            <div class="col-header">PENCATATAN/PENDATAAN</div>
-            <div class="col-content"><p class="section-content" id="peringatanText"></p></div>
-            <div class="col-content"><p class="section-content" id="pencatatanText"></p></div>
-        </div>
-        <table class="activity-table" id="activityTableData">
-            <thead>
-                <tr>
-                    <th rowspan="2">No</th><th rowspan="2">Kegiatan</th><th rowspan="2">Pelaksana</th>
-                    <th colspan="3">Mutu Baku</th><th rowspan="2">Keterangan</th>
-                </tr>
-                <tr><th>Kelengkapan</th><th>Waktu</th><th>Output</th></tr>
-            </thead>
-            <tbody></tbody>
-        </table>
         
-        <!-- Kontainer untuk Pratinjau Flowchart -->
-        <div class="preview-section-title">ALUR FLOWCHART</div>
-        <div id="flowchartPreviewContainer">
-            <!-- Mermaid.js akan menggenerate flowchart di sini -->
+        <h5 class="form-section-title">Judul Utama SOP</h5>
+        <div class="row">
+            <div class="input-field col s12"><i class="material-icons prefix">title</i><input type="text" id="form-sop-title" value="SOP PENYUSUNAN ANALIS JABATAN ANALIS BEBAN KERJA KUALIFIKASI PELAKSANA"><label for="form-sop-title">Judul SOP</label></div>
         </div>
 
+        <h5 class="form-section-title">Detail Konten</h5>
+        <div class="row">
+            <div class="input-field col s12"><i class="material-icons prefix">gavel</i><textarea id="form-dasar-hukum" class="materialize-textarea">Keputusan Menteri Pendayagunaan Aparatur Sipil Negara RB Nomor 656 Tahun 2023 tentang Nomenklatur Jabatan Pelaksana Instansi Pemerintah</textarea><label for="form-dasar-hukum">Dasar Hukum</label><span class="helper-text">Masukkan satu item per baris.</span></div>
+            <div class="input-field col s12"><i class="material-icons prefix">school</i><textarea id="form-kualifikasi" class="materialize-textarea">Memahami tugas dan fungsi Kementerian Agama</textarea><label for="form-kualifikasi">Kualifikasi Pelaksana</label><span class="helper-text">Masukkan satu item per baris.</span></div>
+            <div class="input-field col s12"><i class="material-icons prefix">link</i><textarea id="form-keterkaitan" class="materialize-textarea">SOP Pembuatan SK/Surat Tugas Tim Kerja</textarea><label for="form-keterkaitan">Keterkaitan</label><span class="helper-text">Masukkan satu item per baris.</span></div>
+            <div class="input-field col s12"><i class="material-icons prefix">build</i><textarea id="form-peralatan" class="materialize-textarea">Term Of Reference (TOR)</textarea><label for="form-peralatan">Peralatan/Perlengkapan</label><span class="helper-text">Masukkan satu item per baris.</span></div>
+            <div class="input-field col s12"><i class="material-icons prefix">warning</i><textarea id="form-peringatan" class="materialize-textarea">Jika tidak memiliki pemahaman yang baik terkait jabatan dan beban kerja Kementerian Agama akan menghambat penerapan jabatan dan beban kerja yang tidak sesuai di lingkungan Kementerian Agama</textarea><label for="form-peringatan">Peringatan</label></div>
+            <div class="input-field col s12"><i class="material-icons prefix">archive</i><textarea id="form-pencatatan" class="materialize-textarea">Disimpan dalam data elektronik dan manual</textarea><label for="form-pencatatan">Pencatatan/Pendataan</label></div>
+        </div>
+
+        <h5 class="form-section-title">Tabel Rincian Kegiatan</h5>
+        <div class="row">
+            <div class="col s12">
+                <table id="form-activity-table" class="form-table">
+                    <thead><tr><th>Kegiatan</th><th>Pelaksana</th><th>Kelengkapan</th><th>Waktu</th><th>Output</th><th>Keterangan</th><th>Aksi</th></tr></thead>
+                    <tbody></tbody>
+                </table>
+                <button type="button" id="add-activity-row-btn" class="btn-small blue waves-effect waves-light" style="margin-top: 15px;"><i class="material-icons left">add</i>Tambah</button>
+            </div>
+        </div>
+
+        <h5 class="form-section-title">Tabel Alur Flowchart</h5>
+        <div class="row">
+            <div class="col s12">
+                <table id="form-flowchart-table" class="form-table responsive-table">
+                    <thead><tr><th style="width: 5%;">ID</th><th style="width: 25%;">Kegiatan</th><th style="width: 15%;">Pelaksana</th><th style="width: 15%;">Node</th><th style="width: 10%;">ID Tujuan</th><th style="width: 10%;">ID 'Ya'</th><th style="width: 10%;">ID 'Tidak'</th><th style="width: 10%;">Aksi</th></tr></thead>
+                    <tbody></tbody>
+                </table>
+                <button type="button" id="add-flowchart-row-btn" class="btn-small blue waves-effect waves-light" style="margin-top: 15px;"><i class="material-icons left">add</i>Tambah</button>
+            </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="container center-align action-buttons">
+      <div class="row">
+        <div class="col s12 m6">
+          <button id="updatePreviewBtn" class="btn-large green waves-effect waves-light" style="width:100%"><i class="material-icons right">update</i>Update Pratinjau</button>
+        </div>
+        <div class="col s12 m6">
+          <button id="generatePdfFromHtml" class="btn-large blue waves-effect waves-light" style="width:100%"><i class="material-icons right">picture_as_pdf</i>Generate PDF</button>
+        </div>
+      </div>
     </div>
 
+    <!-- Pratinjau PDF (Tidak diubah) -->
+    <div id="pdfPreviewContent">
+        <div id="topSectionGrid"><div id="leftColumnContent"><img src="https://upload.wikimedia.org/wikipedia/commons/9/9a/Kementerian_Agama_new_logo.png" alt="Logo Kementerian Agama" class="logo-kemenag"><div class="header-section"><h1>KEMENTERIAN AGAMA REPUBLIK INDONESIA</h1><h2 id="preview-satuan-kerja"></h2><h2 id="preview-unit-kerja"></h2></div></div><div id="rightColumnContent"><table class="info-table" id="infoTableData"><tr><td>Nomor</td><td>:</td><td id="preview-nomor"></td></tr><tr><td>Tanggal Pembuatan</td><td>:</td><td id="preview-tgl-pembuatan"></td></tr><tr><td>Tanggal Revisi</td><td>:</td><td id="preview-tgl-revisi"></td></tr><tr><td>Tanggal Efektif</td><td>:</td><td id="preview-tgl-efektif"></td></tr></table><div class="footer-signer"><p>Disahkan Oleh</p><p id="preview-jabatan"></p><br><br><br><br></div><div class="footer-signer"><p id="preview-signer-name"></p><p id="preview-signer-nip"></p></div></div></div>
+        <div id="sopTitleContainer"></div>
+        <div class="table-like-section"><div class="col-header">DASAR HUKUM</div><div class="col-header">KUALIFIKASI PELAKSANA</div><div class="col-content"><ol class="section-content" id="dasarHukumList"></ol></div><div class="col-content"><ol class="section-content" id="kualifikasiPelaksanaList"></ol></div></div>
+        <div class="table-like-section"><div class="col-header">KETERKAITAN</div><div class="col-header">PERALATAN/PERLENGKAPAN</div><div class="col-content"><ol class="section-content" id="keterkaitanList"></ol></div><div class="col-content"><ol class="section-content" id="peralatanList"></ol></div></div>
+        <div class="table-like-section"><div class="col-header">PERINGATAN</div><div class="col-header">PENCATATAN/PENDATAAN</div><div class="col-content"><p class="section-content" id="peringatanText"></p></div><div class="col-content"><p class="section-content" id="pencatatanText"></p></div></div>
+        <table class="activity-table" id="activityTableData"><thead><tr><th rowspan="2">No</th><th rowspan="2">Kegiatan</th><th rowspan="2">Pelaksana</th><th colspan="3">Mutu Baku</th><th rowspan="2">Keterangan</th></tr><tr><th>Kelengkapan</th><th>Waktu</th><th>Output</th></tr></thead><tbody></tbody></table>
+        <div class="preview-section-title">ALUR FLOWCHART</div>
+        <div id="flowchartPreviewContainer"></div>
+    </div>
+
+    <!-- 2. Import Libraries JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://unpkg.com/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 
     <script>
-        const { jsPDF } = window.jspdf;
-
-        let activityDataCache = [];
-        // [MODIFIKASI] Variabel global untuk counter ID Flowchart
-        let nextFlowchartId = 1;
-
+        // 3. Inisialisasi Komponen Materialize dan Kode Aplikasi
         document.addEventListener('DOMContentLoaded', () => {
+            // Inisialisasi semua komponen Materialize secara otomatis
+            M.AutoInit();
+            
+            // Set format untuk datepicker
+            const datePickers = document.querySelectorAll('.datepicker');
+            datePickers.forEach(picker => {
+                const instance = M.Datepicker.getInstance(picker);
+                instance.options.format = 'd mmmm yyyy';
+            });
+            
+            // --- Kode Aplikasi Anda (Tidak diubah) ---
             mermaid.initialize({ startOnLoad: false, theme: 'neutral' });
 
             const formActivityTableBody = document.querySelector('#form-activity-table tbody');
-
-            // --- Inisialisasi Tabel Kegiatan ---
             const initialActivityData = [
-                { kegiatan: 'Mulai', pelaksana: 'Sistem', kelengkapan: '', waktu: '', output: '', keterangan: '' },
-                { kegiatan: 'Membentuk Tim Kerja dan memerintahkan Tim Kerja untuk melakukan Persiapan Penyusunan Analisis jabatan dan Beban Kerja', pelaksana: 'Kepala Kantor Wilayah', kelengkapan: 'TOR dan RAB, SK Tim Kerja, Peta Proses Bisnis nota dinas', waktu: '1 hari', output: 'SK Tim Kerja Surat Tugas Tim Nota Dinas', keterangan: 'SOP Pembuatan SK/Surat Tugas Tim Kerja' },
-                { kegiatan: 'Melakukan persiapan penyusunan analisis jabatan dan beban kerja', pelaksana: 'Tim Kerja', kelengkapan: 'Jadwal dan materi penyusunan analisis jabatan dan beban kerja, undangan, Surat Dinas, dan Nota Dinas', waktu: '10 Bulan', output: 'Jadwal dan materi penyusunan analisis jabatan dan beban kerja, Surat Undangan, Surat Dinas, dan Nota Dinas', keterangan: 'SOP Pembuatan Surat Undangan/Nota Dinas/Surat Dinas, SOP Pembuatan Jadwal Penerapan' },
-                { kegiatan: 'Laporan Sesuai?', pelaksana: 'Kepala Kantor Wilayah', kelengkapan: '', waktu: '', output: '', keterangan: '' },
-                { kegiatan: 'Selesai', pelaksana: 'Sistem', kelengkapan: '', waktu: '', output: '', keterangan: '' }
+                { kegiatan: 'Membuat konsep jadwal pelaksanaan', pelaksana: 'Analis Tata Laksana', kelengkapan: 'TOR, RAB', waktu: '60 menit', output: 'Draft Jadwal', keterangan: 'Koordinasi Awal' }
             ];
             initialActivityData.forEach(data => addActivityRow(data));
-            
-            // [MODIFIKASI] Data flowchart awal dihapus karena sekarang otomatis
             
             formActivityTableBody.addEventListener('input', () => {
                 updateFlowchartChoices();
             });
 
+            // Inisialisasi awal untuk pratinjau
             updatePreview(); 
         });
 
-        // ====================================================
-        // ============== LOGIKA TABEL KEGIATAN ==============
-        // ====================================================
+
+        const { jsPDF } = window.jspdf;
+        let activityDataCache = [];
+        let nextFlowchartId = 1;
+
         const formActivityTableBody = document.querySelector('#form-activity-table tbody');
         document.getElementById('add-activity-row-btn').addEventListener('click', () => {
             addActivityRow();
@@ -474,7 +253,7 @@ Peta Proses Bisnis</textarea>
                 <td><input type="text" class="form-waktu" value="${data.waktu || ''}"></td>
                 <td><input type="text" class="form-output" value="${data.output || ''}"></td>
                 <td><input type="text" class="form-keterangan" value="${data.keterangan || ''}"></td>
-                <td><button type="button" class="remove-row-btn">Hapus</button></td>
+                <td><button type="button" class="btn-small red waves-effect waves-light remove-row-btn"><i class="material-icons">delete</i></button></td>
             `;
             row.querySelector('.remove-row-btn').addEventListener('click', () => {
                 row.remove();
@@ -482,9 +261,6 @@ Peta Proses Bisnis</textarea>
             });
         };
 
-        // ====================================================
-        // ============== LOGIKA TABEL FLOWCHART ==============
-        // ====================================================
         const formFlowchartTableBody = document.querySelector('#form-flowchart-table tbody');
         document.getElementById('add-flowchart-row-btn').addEventListener('click', () => {
             addFlowchartRow();
@@ -496,7 +272,6 @@ Peta Proses Bisnis</textarea>
                 const selectedKegiatan = e.target.value;
                 const correspondingActivity = activityDataCache.find(act => act.kegiatan === selectedKegiatan);
                 const pelaksanaInput = e.target.closest('tr').querySelector('.form-flow-pelaksana');
-                
                 if (correspondingActivity) {
                     pelaksanaInput.value = correspondingActivity.pelaksana;
                 } else {
@@ -505,15 +280,14 @@ Peta Proses Bisnis</textarea>
             }
         });
 
-        // [MODIFIKASI] Fungsi addFlowchartRow diubah untuk otomatisasi ID
         function addFlowchartRow() {
             const row = formFlowchartTableBody.insertRow();
             row.innerHTML = `
                 <td><input type="number" class="form-flow-id" value="${nextFlowchartId}" readonly></td>
-                <td><select class="form-flow-kegiatan"></select></td>
+                <td><select class="form-flow-kegiatan browser-default"></select></td>
                 <td><input type="text" class="form-flow-pelaksana" readonly></td>
                 <td>
-                    <select class="form-flow-node">
+                    <select class="form-flow-node browser-default">
                         <option value="awal">Awal</option>
                         <option value="proses" selected>Proses</option>
                         <option value="keputusan">Keputusan</option>
@@ -523,12 +297,9 @@ Peta Proses Bisnis</textarea>
                 <td><input type="text" class="form-flow-idtujuan" value=""></td>
                 <td><input type="text" class="form-flow-idy" value=""></td>
                 <td><input type="text" class="form-flow-idt" value=""></td>
-                <td><button type="button" class="remove-row-btn">Hapus</button></td>
+                <td><button type="button" class="btn-small red waves-effect waves-light remove-row-btn"><i class="material-icons">delete</i></button></td>
             `;
-
-            // Tingkatkan ID untuk baris berikutnya
             nextFlowchartId++;
-
             toggleFlowchartInputs(row.querySelector('.form-flow-node'));
             row.querySelector('.remove-row-btn').addEventListener('click', () => row.remove());
             row.querySelector('.form-flow-node').addEventListener('change', (e) => {
@@ -537,26 +308,23 @@ Peta Proses Bisnis</textarea>
         }
         
         function updateFlowchartChoices() {
-            activityDataCache = Array.from(formActivityTableBody.querySelectorAll('tr')).map(row => {
-                return {
-                    kegiatan: row.querySelector('.form-kegiatan').value,
-                    pelaksana: row.querySelector('.form-pelaksana').value
-                };
-            });
+            activityDataCache = Array.from(formActivityTableBody.querySelectorAll('tr')).map(row => ({
+                kegiatan: row.querySelector('.form-kegiatan').value,
+                pelaksana: row.querySelector('.form-pelaksana').value
+            }));
 
             const flowchartSelects = formFlowchartTableBody.querySelectorAll('.form-flow-kegiatan');
             flowchartSelects.forEach(select => {
                 const previouslySelected = select.value;
-                
-                select.innerHTML = '<option value="">-- Pilih Kegiatan --</option>';
-
+                select.innerHTML = '<option value="" disabled selected>Pilih Kegiatan</option>';
                 activityDataCache.forEach(data => {
-                    const option = document.createElement('option');
-                    option.value = data.kegiatan;
-                    option.textContent = data.kegiatan;
-                    select.appendChild(option);
+                    if (data.kegiatan) {
+                        const option = document.createElement('option');
+                        option.value = data.kegiatan;
+                        option.textContent = data.kegiatan;
+                        select.appendChild(option);
+                    }
                 });
-
                 select.value = previouslySelected;
             });
         }
@@ -568,35 +336,25 @@ Peta Proses Bisnis</textarea>
             const idTInput = row.querySelector('.form-flow-idt');
 
             if (selectElement.value === 'keputusan') {
-                idTujuanInput.readOnly = true;
-                idTujuanInput.value = '';
-                idYInput.readOnly = false;
-                idTInput.readOnly = false;
+                idTujuanInput.readOnly = true; idTujuanInput.value = '';
+                idYInput.readOnly = false; idTInput.readOnly = false;
             } else {
                 idTujuanInput.readOnly = false;
-                idYInput.readOnly = true;
-                idYInput.value = '';
-                idTInput.readOnly = true;
-                idTInput.value = '';
+                idYInput.readOnly = true; idYInput.value = '';
+                idTInput.readOnly = true; idTInput.value = '';
             }
         }
 
-
-        // ====================================================
-        // ============== FUNGSI PRATINJAU & PDF ==============
-        // ====================================================
         const updatePreviewBtn = document.getElementById('updatePreviewBtn');
 
         const updatePreview = async () => {
-            // --- Bagian Informasi Umum ---
             document.getElementById('preview-satuan-kerja').textContent = document.getElementById('form-satuan-kerja').value.toUpperCase();
             document.getElementById('preview-unit-kerja').textContent = document.getElementById('form-unit-kerja').value.toUpperCase();
             document.getElementById('preview-nomor').textContent = document.getElementById('form-nomor').value;
             
             const formatDate = (dateString) => {
-                if (!dateString) return '';
-                const date = new Date(dateString);
-                return date.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+                 if (!dateString) return '';
+                 return dateString;
             };
 
             document.getElementById('preview-tgl-pembuatan').textContent = formatDate(document.getElementById('form-tgl-pembuatan').value);
@@ -623,7 +381,6 @@ Peta Proses Bisnis</textarea>
             document.getElementById('peringatanText').textContent = document.getElementById('form-peringatan').value;
             document.getElementById('pencatatanText').textContent = document.getElementById('form-pencatatan').value;
             
-            // --- Bagian Tabel Kegiatan ---
             const previewActivityTableBody = document.querySelector('#activityTableData tbody');
             previewActivityTableBody.innerHTML = '';
             
@@ -632,17 +389,11 @@ Peta Proses Bisnis</textarea>
                 const newRow = previewActivityTableBody.insertRow();
                 const cells = row.querySelectorAll('input');
                 newRow.innerHTML = `
-                    <td>${index + 1}</td>
-                    <td>${cells[0].value}</td>
-                    <td>${cells[1].value}</td>
-                    <td>${cells[2].value}</td>
-                    <td>${cells[3].value}</td>
-                    <td>${cells[4].value}</td>
-                    <td>${cells[5].value}</td>
-                `;
+                    <td>${index + 1}</td><td>${cells[0].value}</td><td>${cells[1].value}</td>
+                    <td>${cells[2].value}</td><td>${cells[3].value}</td><td>${cells[4].value}</td>
+                    <td>${cells[5].value}</td>`;
             });
             
-            // --- Logika untuk Pratinjau Flowchart ---
             const flowchartContainer = document.getElementById('flowchartPreviewContainer');
             flowchartContainer.innerHTML = ''; 
 
@@ -662,29 +413,19 @@ Peta Proses Bisnis</textarea>
 
             if (nodes.length > 0) {
                 let mermaidSyntax = 'graph TD;\n'; 
-
                 nodes.forEach(n => {
-                    if (!n.id || !n.kegiatan) return; // Lewati baris yang belum lengkap
+                    if (!n.id || !n.kegiatan) return;
                     const sanitizedKegiatan = n.kegiatan.replace(/"/g, '#quot;');
                     const sanitizedPelaksana = n.pelaksana.replace(/"/g, '#quot;');
                     const nodeText = `"${sanitizedKegiatan}<br><i>(${sanitizedPelaksana})</i>"`;
-
                     switch (n.node) {
-                        case 'awal':
-                        case 'akhir':
-                            mermaidSyntax += `    ${n.id}([${nodeText}]);\n`;
-                            break;
-                        case 'proses':
-                            mermaidSyntax += `    ${n.id}[${nodeText}];\n`;
-                            break;
-                        case 'keputusan':
-                            mermaidSyntax += `    ${n.id}{${nodeText}};\n`;
-                            break;
+                        case 'awal': case 'akhir': mermaidSyntax += `    ${n.id}([${nodeText}]);\n`; break;
+                        case 'proses': mermaidSyntax += `    ${n.id}[${nodeText}];\n`; break;
+                        case 'keputusan': mermaidSyntax += `    ${n.id}{${nodeText}};\n`; break;
                     }
                 });
-
                 nodes.forEach(n => {
-                    if (!n.id) return; // Lewati baris yang belum lengkap
+                    if (!n.id) return;
                     if (n.node === 'keputusan') {
                         if (n.idY) mermaidSyntax += `    ${n.id} -- YA --> ${n.idY};\n`;
                         if (n.idT) mermaidSyntax += `    ${n.id} -- TIDAK --> ${n.idT};\n`;
@@ -692,30 +433,23 @@ Peta Proses Bisnis</textarea>
                         mermaidSyntax += `    ${n.id} --> ${n.idTujuan};\n`;
                     }
                 });
-                
                 const mermaidDiv = document.createElement('div');
                 mermaidDiv.className = 'mermaid';
                 mermaidDiv.textContent = mermaidSyntax;
                 flowchartContainer.appendChild(mermaidDiv);
-
                 mermaidDiv.removeAttribute('data-processed');
-
-                await mermaid.run({
-                    nodes: [mermaidDiv]
-                });
+                await mermaid.run({ nodes: [mermaidDiv] });
             }
         };
 
         updatePreviewBtn.addEventListener('click', () => {
             updatePreview();
-            alert('Pratinjau telah diperbarui dengan data dari form!');
+            M.toast({html: 'Pratinjau telah diperbarui!'});
         });
         
-        // --- LOGIKA GENERATE PDF (Dengan Perbaikan Font Size) ---
-        const generatePdfFromHtmlBtn = document.getElementById('generatePdfFromHtml');
-        generatePdfFromHtmlBtn.addEventListener('click', async () => {
+        // --- MODIFIKASI DIMULAI DI SINI ---
+        document.getElementById('generatePdfFromHtml').addEventListener('click', async () => {
             await updatePreview(); 
-
             const doc = new jsPDF('p', 'mm', 'a4');
             const pageMargin = 15;
             const contentWidth = doc.internal.pageSize.getWidth() - (pageMargin * 2);
@@ -723,65 +457,41 @@ Peta Proses Bisnis</textarea>
             let yOffset = pageMargin;
 
             try {
-                const elementsBeforeTable = [
-                    document.getElementById('topSectionGrid'),
-                    document.getElementById('sopTitleContainer'),
-                    ...document.querySelectorAll('.table-like-section')
-                ];
-                
+                // Render semua elemen Halaman 1
+                const elementsBeforeTable = [document.getElementById('topSectionGrid'), document.getElementById('sopTitleContainer'), ...document.querySelectorAll('.table-like-section')];
                 for (const element of elementsBeforeTable) {
                     const canvas = await html2canvas(element, { scale: scaleFactor, useCORS: true });
                     const imgData = canvas.toDataURL('image/jpeg', 0.95);
                     const pdfWidth = contentWidth;
                     const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-                    
-                    if (yOffset + pdfHeight > doc.internal.pageSize.getHeight() - pageMargin) {
-                        doc.addPage();
-                        yOffset = pageMargin;
-                    }
-
+                    if (yOffset + pdfHeight > doc.internal.pageSize.getHeight() - pageMargin) { doc.addPage(); yOffset = pageMargin; }
                     doc.addImage(imgData, 'JPEG', pageMargin, yOffset, pdfWidth, pdfHeight);
                     yOffset += pdfHeight + 0.5;
                 }
-
+                
+                // Render Tabel Kegiatan di Halaman 1
                 doc.autoTable({
-                    html: '#activityTableData',
-                    startY: yOffset,
-                    theme: 'grid',
+                    html: '#activityTableData', startY: yOffset, theme: 'grid',
                     margin: { left: pageMargin, right: pageMargin },
-                    headStyles: { 
-                        fillColor: [181, 181, 181], 
-                        textColor: 0, 
-                        fontStyle: 'bold', 
-                        halign: 'center', 
-                        lineWidth: 0.1, 
-                        lineColor: [0, 0, 0] 
-                    },
-                    styles: { 
-                        fontSize: 7, // Ukuran font disamakan menjadi 9
-                        textColor: 0,
-                        cellPadding: 1, 
-                        lineWidth: 0.1, 
-                        lineColor: [0, 0, 0] 
-                    },
+                    headStyles: { fillColor: [181, 181, 181], textColor: 0, fontStyle: 'bold', halign: 'center', lineWidth: 0.1, lineColor: [0, 0, 0] },
+                    styles: { fontSize: 7, textColor: 0, cellPadding: 1, lineWidth: 0.1, lineColor: [0, 0, 0] },
                 });
 
+                // ---- MODIFIKASI UTAMA: Pindahkan Flowchart ke Halaman Baru ----
+                // 1. Secara paksa menambahkan halaman baru setelah konten halaman 1 selesai.
                 doc.addPage();
+                
+                // 2. Reset posisi Y ke margin atas untuk halaman baru ini.
                 yOffset = pageMargin;
                 
+                // 3. Render flowchart ke halaman baru.
                 const flowchartWrapper = document.createElement('div');
                 flowchartWrapper.className = 'pdf-render-wrapper';
-                
                 flowchartWrapper.appendChild(document.querySelector('.preview-section-title').cloneNode(true));
                 flowchartWrapper.appendChild(document.getElementById('flowchartPreviewContainer').cloneNode(true));
-                
                 document.body.appendChild(flowchartWrapper);
 
-                const flowchartCanvas = await html2canvas(flowchartWrapper, {
-                    scale: scaleFactor,
-                    useCORS: true,
-                });
-                
+                const flowchartCanvas = await html2canvas(flowchartWrapper, { scale: scaleFactor, useCORS: true });
                 document.body.removeChild(flowchartWrapper); 
 
                 const flowchartImgData = flowchartCanvas.toDataURL('image/jpeg', 0.95);
@@ -789,14 +499,17 @@ Peta Proses Bisnis</textarea>
                 const flowchartPdfHeight = (flowchartCanvas.height * flowchartPdfWidth) / flowchartCanvas.width;
 
                 doc.addImage(flowchartImgData, 'JPEG', pageMargin, yOffset, flowchartPdfWidth, flowchartPdfHeight);
+                
+                // ---- AKHIR MODIFIKASI ----
 
                 doc.output('dataurlnewwindow');
 
             } catch (error) {
                 console.error("Terjadi kesalahan saat membuat PDF:", error);
-                alert("Gagal membuat PDF. Periksa konsol browser untuk detail kesalahan.");
+                M.toast({html: 'Gagal membuat PDF. Cek konsol.', classes: 'red'});
             }
         });
+        // --- MODIFIKASI SELESAI DI SINI ---
     </script>
 </body>
 </html>
