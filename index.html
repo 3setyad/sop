@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -107,7 +108,7 @@
         .table-like-section .col-content p { margin: 0; line-height: 1.3; }
         .activity-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 9px; }
         .activity-table th, .activity-table td { border: 1px solid #000; padding: 4px; text-align: left; vertical-align: top; }
-        .activity-table th { background-color: #b5b5b5; font-weight: bold; text-align: center; }
+        .activity-table th { background-color: #b5b5b5; font-weight: bold; text-align: center; vertical-align: middle; }
         .preview-section-title { font-size: 12px; font-weight: bold; text-align: center; padding: 5px; border: 1px solid #000; background-color: #b5b5b5; margin-top: 10px; }
         #flowchartPreviewContainer { padding: 10px; border: 1px solid #000; border-top: none; font-size: 10px; text-align: center; }
         .mermaid text { font-family: Arial, sans-serif !important; font-size: 10px !important; }
@@ -121,6 +122,15 @@
     <div class="container">
       <div class="card-panel z-depth-2" id="input-form">
         <h4 class="form-title">Form Input Data SOP</h4>
+
+        <!-- Tombol untuk membuka Modal PDF KMA 168 -->
+        <div class="center-align" style="margin-bottom: 30px;">
+            <a class="btn waves-effect waves-light modal-trigger blue-grey darken-2" href="https://drive.google.com/file/d/1xb08Z22Izl8KYJNsLIvN5CmSwnPKLzTn/preview" target="_blank">
+                <i class="material-icons left">picture_as_pdf</i>
+                KMA 168 TH 2010 tentang Pedoman Penyusunan SOP
+            </a>
+        </div>
+        <!-- Akhir Tombol -->
 
         <h5 class="form-section-title">Informasi Dokumen & Penanda Tangan</h5>
         <div class="row">
@@ -185,14 +195,18 @@
       </div>
     </div>
 
-    <!-- Pratinjau PDF (Tidak diubah) -->
+    <!-- Pratinjau PDF -->
     <div id="pdfPreviewContent">
         <div id="topSectionGrid"><div id="leftColumnContent"><img src="https://upload.wikimedia.org/wikipedia/commons/9/9a/Kementerian_Agama_new_logo.png" alt="Logo Kementerian Agama" class="logo-kemenag"><div class="header-section"><h1>KEMENTERIAN AGAMA REPUBLIK INDONESIA</h1><h2 id="preview-satuan-kerja"></h2><h2 id="preview-unit-kerja"></h2></div></div><div id="rightColumnContent"><table class="info-table" id="infoTableData"><tr><td>Nomor</td><td>:</td><td id="preview-nomor"></td></tr><tr><td>Tanggal Pembuatan</td><td>:</td><td id="preview-tgl-pembuatan"></td></tr><tr><td>Tanggal Revisi</td><td>:</td><td id="preview-tgl-revisi"></td></tr><tr><td>Tanggal Efektif</td><td>:</td><td id="preview-tgl-efektif"></td></tr></table><div class="footer-signer"><p>Disahkan Oleh</p><p id="preview-jabatan"></p><br><br><br><br></div><div class="footer-signer"><p id="preview-signer-name"></p><p id="preview-signer-nip"></p></div></div></div>
         <div id="sopTitleContainer"></div>
         <div class="table-like-section"><div class="col-header">DASAR HUKUM</div><div class="col-header">KUALIFIKASI PELAKSANA</div><div class="col-content"><ol class="section-content" id="dasarHukumList"></ol></div><div class="col-content"><ol class="section-content" id="kualifikasiPelaksanaList"></ol></div></div>
         <div class="table-like-section"><div class="col-header">KETERKAITAN</div><div class="col-header">PERALATAN/PERLENGKAPAN</div><div class="col-content"><ol class="section-content" id="keterkaitanList"></ol></div><div class="col-content"><ol class="section-content" id="peralatanList"></ol></div></div>
         <div class="table-like-section"><div class="col-header">PERINGATAN</div><div class="col-header">PENCATATAN/PENDATAAN</div><div class="col-content"><p class="section-content" id="peringatanText"></p></div><div class="col-content"><p class="section-content" id="pencatatanText"></p></div></div>
-        <table class="activity-table" id="activityTableData"><thead><tr><th rowspan="2">No</th><th rowspan="2">Kegiatan</th><th rowspan="2">Pelaksana</th><th colspan="3">Mutu Baku</th><th rowspan="2">Keterangan</th></tr><tr><th>Kelengkapan</th><th>Waktu</th><th>Output</th></tr></thead><tbody></tbody></table>
+        <!-- Struktur tabel kegiatan di pratinjau. Header akan dibuat dinamis oleh JS -->
+        <table class="activity-table" id="activityTableData">
+            <thead></thead>
+            <tbody></tbody>
+        </table>
         <div class="preview-section-title">ALUR FLOWCHART</div>
         <div id="flowchartPreviewContainer"></div>
     </div>
@@ -221,7 +235,9 @@
 
             const formActivityTableBody = document.querySelector('#form-activity-table tbody');
             const initialActivityData = [
-                { kegiatan: 'Membuat konsep jadwal pelaksanaan', pelaksana: 'Analis Tata Laksana', kelengkapan: 'TOR, RAB', waktu: '60 menit', output: 'Draft Jadwal', keterangan: 'Koordinasi Awal' }
+                { kegiatan: 'Membuat konsep jadwal pelaksanaan', pelaksana: 'Analis Tata Laksana', kelengkapan: 'TOR, RAB', waktu: '60 menit', output: 'Draft Jadwal', keterangan: 'Koordinasi Awal' },
+                { kegiatan: 'Rapat internal pembahasan jadwal', pelaksana: 'Kepala Bagian', kelengkapan: 'Draft Jadwal', waktu: '120 menit', output: 'Jadwal Final', keterangan: 'Persetujuan' },
+                { kegiatan: 'Mengajukan surat tugas tim', pelaksana: 'Analis Tata Laksana', kelengkapan: 'Jadwal Final', waktu: '30 menit', output: 'Draft Surat Tugas', keterangan: '-' }
             ];
             initialActivityData.forEach(data => addActivityRow(data));
             
@@ -381,19 +397,82 @@
             document.getElementById('peringatanText').textContent = document.getElementById('form-peringatan').value;
             document.getElementById('pencatatanText').textContent = document.getElementById('form-pencatatan').value;
             
-            const previewActivityTableBody = document.querySelector('#activityTableData tbody');
-            previewActivityTableBody.innerHTML = '';
+            // --- START: MODIFIKASI TABEL KEGIATAN SESUAI PERMINTAAN ---
             
-            const formRows = formActivityTableBody.querySelectorAll('tr');
+            // 1. Ambil data dari form dan kumpulkan semua 'pelaksana' unik
+            const formRows = document.querySelectorAll('#form-activity-table tbody tr');
+            const allPelaksana = Array.from(formRows)
+                .map(row => row.querySelector('.form-pelaksana').value.trim())
+                .filter(p => p); // Filter untuk menghapus string kosong
+            const uniquePelaksana = [...new Set(allPelaksana)];
+
+            // 2. Ambil referensi ke elemen tabel pratinjau
+            const previewActivityTable = document.getElementById('activityTableData');
+            const previewThead = previewActivityTable.querySelector('thead');
+            const previewTbody = previewActivityTable.querySelector('tbody');
+
+            // 3. Bangun ulang header tabel pratinjau secara dinamis
+            previewThead.innerHTML = ''; // Kosongkan header yang ada
+            
+            const headerRow1 = previewThead.insertRow();
+            headerRow1.innerHTML = `
+                <th rowspan="2">No</th>
+                <th rowspan="2">Kegiatan</th>
+                <th colspan="${uniquePelaksana.length || 1}">Pelaksana</th>
+                <th colspan="3">Mutu Baku</th>
+                <th rowspan="2">Keterangan</th>
+            `;
+
+            const headerRow2 = previewThead.insertRow();
+            let pelaksanaHeaders = '';
+            if (uniquePelaksana.length > 0) {
+                uniquePelaksana.forEach(p => {
+                    // MODIFIKASI: Ganti spasi dengan <br> untuk line break di HTML
+                    const formattedPelaksana = p.replace(/ /g, '<br>');
+                    pelaksanaHeaders += `<th>${formattedPelaksana}</th>`;
+                });
+            } else {
+                pelaksanaHeaders = '<th>-</th>'; // Kolom cadangan jika tidak ada pelaksana
+            }
+            headerRow2.innerHTML = `
+                ${pelaksanaHeaders}
+                <th>Kelengkapan</th>
+                <th>Waktu</th>
+                <th>Output</th>
+            `;
+            
+            // 4. Bangun ulang isi tabel pratinjau dengan tanda centang
+            previewTbody.innerHTML = ''; // Kosongkan isi tabel yang ada
             formRows.forEach((row, index) => {
-                const newRow = previewActivityTableBody.insertRow();
-                const cells = row.querySelectorAll('input');
-                newRow.innerHTML = `
-                    <td>${index + 1}</td><td>${cells[0].value}</td><td>${cells[1].value}</td>
-                    <td>${cells[2].value}</td><td>${cells[3].value}</td><td>${cells[4].value}</td>
-                    <td>${cells[5].value}</td>`;
+                const cells = Array.from(row.querySelectorAll('input')).map(input => input.value);
+                const [kegiatan, pelaksana, kelengkapan, waktu, output, keterangan] = cells;
+
+                const newRow = previewTbody.insertRow();
+                let newRowContent = `
+                    <td style="text-align: center;">${index + 1}</td>
+                    <td>${kegiatan}</td>
+                `;
+
+                // Tambahkan kolom tanda centang untuk setiap pelaksana unik
+                if (uniquePelaksana.length > 0) {
+                     uniquePelaksana.forEach(p => {
+                        const check = (p === pelaksana.trim()) ? '√' : '';
+                        newRowContent += `<td style="text-align: center; font-weight: bold;">${check}</td>`;
+                    });
+                } else {
+                    newRowContent += `<td></td>`; // Tambah kolom kosong jika tidak ada pelaksana
+                }
+
+                newRowContent += `
+                    <td>${kelengkapan}</td>
+                    <td>${waktu}</td>
+                    <td>${output}</td>
+                    <td>${keterangan}</td>
+                `;
+                newRow.innerHTML = newRowContent;
             });
-            
+            // --- END: MODIFIKASI TABEL KEGIATAN ---
+
             const flowchartContainer = document.getElementById('flowchartPreviewContainer');
             flowchartContainer.innerHTML = ''; 
 
@@ -447,7 +526,6 @@
             M.toast({html: 'Pratinjau telah diperbarui!'});
         });
         
-        // --- MODIFIKASI DIMULAI DI SINI ---
         document.getElementById('generatePdfFromHtml').addEventListener('click', async () => {
             await updatePreview(); 
             const doc = new jsPDF('p', 'mm', 'a4');
@@ -469,22 +547,59 @@
                     yOffset += pdfHeight + 0.5;
                 }
                 
+                // Definisikan uniquePelaksana agar bisa diakses oleh didParseCell
+                const formRowsForPdf = document.querySelectorAll('#form-activity-table tbody tr');
+                const allPelaksanaForPdf = Array.from(formRowsForPdf)
+                    .map(row => row.querySelector('.form-pelaksana').value.trim())
+                    .filter(p => p);
+                const uniquePelaksana = [...new Set(allPelaksanaForPdf)]; 
+
                 // Render Tabel Kegiatan di Halaman 1
                 doc.autoTable({
-                    html: '#activityTableData', startY: yOffset, theme: 'grid',
+                    html: '#activityTableData', 
+                    startY: yOffset, 
+                    theme: 'grid',
                     margin: { left: pageMargin, right: pageMargin },
-                    headStyles: { fillColor: [181, 181, 181], textColor: 0, fontStyle: 'bold', halign: 'center', lineWidth: 0.1, lineColor: [0, 0, 0] },
-                    styles: { fontSize: 7, textColor: 0, cellPadding: 1, lineWidth: 0.1, lineColor: [0, 0, 0] },
+                    headStyles: { 
+                        fillColor: [181, 181, 181], 
+                        textColor: 0, 
+                        fontStyle: 'bold', 
+                        halign: 'center', 
+                        valign: 'middle', 
+                        lineWidth: 0.1, 
+                        lineColor: [0, 0, 0] 
+                    },
+                    styles: { 
+                        fontSize: 7, 
+                        textColor: 0, 
+                        cellPadding: 1, 
+                        lineWidth: 0.1, 
+                        lineColor: [0, 0, 0] 
+                    },
+                    didParseCell: function (data) {
+                        const pelaksanaColumnTitles = uniquePelaksana;
+                        
+                        // Set perataan tengah untuk semua header dan kolom centang
+                        if (data.section === 'head' || pelaksanaColumnTitles.includes(data.column.dataKey)) {
+                            data.cell.styles.halign = 'center';
+                        }
+                        
+                        // MODIFIKASI: Buat line break untuk header pelaksana di PDF
+                        if (data.section === 'head' && data.cell.text.length > 0) {
+                            const cellText = data.cell.text[0];
+                            // Periksa apakah teks sel ini adalah salah satu nama pelaksana
+                            if (pelaksanaColumnTitles.includes(cellText)) {
+                                // Ganti spasi dengan karakter newline (\n)
+                                data.cell.text = cellText.replace(/ /g, '\n');
+                            }
+                        }
+                    }
                 });
 
-                // ---- MODIFIKASI UTAMA: Pindahkan Flowchart ke Halaman Baru ----
-                // 1. Secara paksa menambahkan halaman baru setelah konten halaman 1 selesai.
+                // Pindahkan Flowchart ke Halaman Baru
                 doc.addPage();
-                
-                // 2. Reset posisi Y ke margin atas untuk halaman baru ini.
                 yOffset = pageMargin;
                 
-                // 3. Render flowchart ke halaman baru.
                 const flowchartWrapper = document.createElement('div');
                 flowchartWrapper.className = 'pdf-render-wrapper';
                 flowchartWrapper.appendChild(document.querySelector('.preview-section-title').cloneNode(true));
@@ -500,8 +615,6 @@
 
                 doc.addImage(flowchartImgData, 'JPEG', pageMargin, yOffset, flowchartPdfWidth, flowchartPdfHeight);
                 
-                // ---- AKHIR MODIFIKASI ----
-
                 doc.output('dataurlnewwindow');
 
             } catch (error) {
@@ -509,7 +622,6 @@
                 M.toast({html: 'Gagal membuat PDF. Cek konsol.', classes: 'red'});
             }
         });
-        // --- MODIFIKASI SELESAI DI SINI ---
     </script>
 </body>
 </html>
